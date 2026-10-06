@@ -1,0 +1,36 @@
+# ==============================================================================
+# پیکربندی سرورهای cPanel / Apache / لایت‌اسپید
+# ==============================================================================
+Options -Indexes
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # هدایت درخواست‌های API و فایل‌های آپلودی بدون تغییر
+    RewriteRule ^api/ - [L]
+    RewriteRule ^uploads/ - [L]
+
+    # روت‌های پویش: هدایت /campaign/xxx به /campaign/index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^campaign/([^/]+)/?$ /campaign/index.html?id=$1 [QSA,L]
+
+    # بازنویسی مسیرهای پنل ادمین و کمپین
+    RewriteRule ^admin/?$ /admin/index.html [L]
+    RewriteRule ^campaign/?$ /campaign/index.html [L]
+</IfModule>
+
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# تنظیم Cache برای افزایش سرعت لود فایل‌های CSS و JS
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
